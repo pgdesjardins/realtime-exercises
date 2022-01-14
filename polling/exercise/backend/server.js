@@ -17,17 +17,20 @@ msg.push({
 // get express ready to run
 const app = express();
 app.use(morgan("dev"));
-app.use(bodyParser.json());
+const jsonParser = bodyParser.json()
+const urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(express.static("frontend"));
 
 app.get("/poll", function (req, res) {
-  // use getMsgs to get messages to send back
-  // write code here
+  res.json({ msg: getMsgs() });
 });
 
-app.post("/poll", function (req, res) {
-  // add a new message to the server
-  // write code here
+app.post("/poll", urlencodedParser, function (req, res) {
+  const { user, text } = req.body;
+
+  msg.push({ user, text, time: Date.now() });
+
+  res.json({ status: "ok" });
 });
 
 // start the server
